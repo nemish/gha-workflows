@@ -5,18 +5,6 @@ on:
       status:
         required: true
         type: string
-      repository:
-        required: true
-        type: string
-      sha:
-        required: true
-        type: string
-      ref:
-        required: true
-        type: string
-      commit_message:
-        required: true
-        type: string
     secrets:
       TELEGRAM_CHAT_ID:
         required: true
@@ -30,13 +18,13 @@ jobs:
       - name: Set Telegram Notification Message
         run: |
           if [[ "${{ inputs.status }}" == "success" ]]; then
-            MESSAGE="🎉 Success! Deploy ${{ inputs.repository }}"
+            MESSAGE="🎉 Success! Deploy ${{ github.repository }}"
           else
-            MESSAGE="❌ Failure! Deploy ${{ inputs.repository }}"
+            MESSAGE="❌ Failure! Deploy ${{ github.repository }}"
           fi
-          MESSAGE="${MESSAGE}%0ACommit message: ${{ inputs.commit_message }}"
-          MESSAGE="${MESSAGE}%0AChanges: https://github.com/${{ inputs.repository }}/commit/${{ inputs.sha }}"
-          MESSAGE="${MESSAGE}%0ABranch: ${{ inputs.ref }}"
+          MESSAGE="${MESSAGE}%0ACommit message: ${{ github.event.commits[0].message }}"
+          MESSAGE="${MESSAGE}%0AChanges: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          MESSAGE="${MESSAGE}%0ABranch: ${{ github.ref }}"
           echo "TELEGRAM_MESSAGE=${MESSAGE}" >> $GITHUB_ENV
 
       - name: Notify on Telegram
