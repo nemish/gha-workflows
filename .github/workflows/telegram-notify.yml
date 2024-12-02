@@ -1,0 +1,47 @@
+name: Telegram Notification
+on:
+  workflow_call:
+    inputs:
+      status:
+        required: true
+        type: string
+      repository:
+        required: true
+        type: string
+      sha:
+        required: true
+        type: string
+      ref:
+        required: true
+        type: string
+      commit_message:
+        required: true
+        type: string
+    secrets:
+      TELEGRAM_CHAT_ID:
+        required: true
+      TELEGRAM_BOT_TOKEN:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Telegram Notification Message
+        run: |
+          if [[ "${{ inputs.status }}" == "success" ]]; then
+            MESSAGE="🎉 Success! Deploy ${{ inputs.repository }}"
+          else
+            MESSAGE="❌ Failure! Deploy ${{ inputs.repository }}"
+          fi
+          MESSAGE="${MESSAGE}%0ACommit message: ${{ inputs.commit_message }}"
+          MESSAGE="${MESSAGE}%0AChanges: https://github.com/${{ inputs.repository }}/commit/${{ inputs.sha }}"
+          MESSAGE="${MESSAGE}%0ABranch: ${{ inputs.ref }}"
+          echo "TELEGRAM_MESSAGE=${MESSAGE}" >> $GITHUB_ENV
+
+      - name: Notify on Telegram
+        uses: appleboy/telegram-action@v0.1.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: "${{ env.TELEGRAM_MESSAGE }}"
