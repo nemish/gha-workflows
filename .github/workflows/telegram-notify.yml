@@ -22,11 +22,10 @@ jobs:
           else
             MESSAGE="❌ Failure! Deploy ${{ github.repository }}"
           fi
-          MESSAGE="${MESSAGE}
-
-          Commit message: ${{ github.event.commits[0].message }}
-          Changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
-          Branch: ${{ github.ref }}"
+          MESSAGE="${MESSAGE}\n"
+          MESSAGE="${MESSAGE}Commit message: ${{ github.event.commits[0].message }}\n"
+          MESSAGE="${MESSAGE}Changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}\n"
+          MESSAGE="${MESSAGE}Branch: ${{ github.ref }}"
           echo "TELEGRAM_MESSAGE=${MESSAGE}" >> $GITHUB_ENV
 
       - name: Notify on Telegram
