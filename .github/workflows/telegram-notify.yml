@@ -26,7 +26,9 @@ jobs:
           MESSAGE="${MESSAGE} Commit message: ${{ github.event.commits[0].message }}"
           MESSAGE="${MESSAGE} Changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           MESSAGE="${MESSAGE} Branch: ${{ github.ref }}"
-          echo "TELEGRAM_MESSAGE=${MESSAGE}" >> $GITHUB_ENV
+          echo "TELEGRAM_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Notify on Telegram
         uses: appleboy/telegram-action@v0.1.1
